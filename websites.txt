@@ -1,0 +1,4 @@
+https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/5_CPU_Scheduling.html
+https://er.yuvayana.org/cpu-scheduling-various-criteria-to-select-best-cpu-scheduling-algorithm/
+https://www.geeksforgeeks.org/multilevel-feedback-queue-scheduling-mlfq-cpu-scheduling/
+https://www.gatevidyalay.com/sjf-scheduling-srtf-cpu-scheduling/
