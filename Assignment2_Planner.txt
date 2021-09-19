@@ -1,13 +1,28 @@
 Members: Balraj, Isabella, Ridham
 Plan to complete assignment with next 6 days
 
-Everyday attend meetings from 6:00pm unitl 8:00pm 
+Everyday attend meetings from 6:00pm until 8:00pm 
 
 [17 - September- 2021]
 Attendies: All  Appologies: None
 Everyone need to be able to manuplate the data on 19-Sept-21.
 Have full understanding of the given code.
 Example could be printing high priority array only.
+----------------------------------------------------------------------
 
 [19 - September - 2021]
-Attendies: 
+Attendies: All Appologies: None
+Meeting started at 6:30 as Ridham has some other appointment
+Balraj - demo the test code anout how to separate High/low arrays
+Isabella shows her research in RR/ >80% of brust. Added website.txt
+Ridham: still understanding the code.
+
+Task for tomorrow - independant steps:
+1  Implement two Queues ->
+2. Calculate time quantum and set >80% of brust time of all customers
+3. Implement RR each queue
+
+Balraj: Implement two separate queues - high/ low
+Ridham: learn github and branching. Time quantum calculation
+Isabella: Script - write random file/ compare result.
+---------------------------------------------------------------------- 
