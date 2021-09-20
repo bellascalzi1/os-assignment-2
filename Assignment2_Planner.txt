@@ -30,8 +30,8 @@ Isabella: Script - write random file/ compare result.
 [20 - September - 2021]
 Attendies:Balraj, Ridham Appologies: Isabella
 Isabella: is sick and will complete her task tonight
-Ridham: still doing his part and will setup git repo tonight. Update status on discord.
-Balraj: will complete his task tonight. Explained Ridham how to obtain data from input file and calculate the numbers from class objects.
+Ridham: will complete his task tonight. Will setup git repo tonight as well. Update status on discord.
+Balraj: Task completed. Explained Ridham how to obtain data from input file and calculate the numbers from class objects.
 
 Pending till tasks are completed and we will continue tomorrow probably 5pm.
 ---------------------------------------------------------------------------
