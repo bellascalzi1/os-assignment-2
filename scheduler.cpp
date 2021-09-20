@@ -2,6 +2,7 @@
 // a1715595, Chatha, Balraj
 // a1773958, Shah, Ridham
 // integration
+//We modify this file and compare result with baseline
 /*
 created by Andrey Kan
 andrey.kan@adelaide.edu.au
@@ -13,8 +14,8 @@ andrey.kan@adelaide.edu.au
 #include <vector>
 
 // std is a namespace: https://www.cplusplus.com/doc/oldtutorial/namespaces/
-const int TIME_ALLOWANCE = 8;  // allow to use up to this number of time slots at once
-const int PRINT_LOG = 0; // print detailed execution trace
+const int TIME_ALLOWANCE = 8; // allow to use up to this number of time slots at once
+const int PRINT_LOG = 0;      // print detailed execution trace
 
 class Customer
 {
@@ -39,7 +40,7 @@ class Event
 {
 public:
     int event_time;
-    int customer_id;  // each event involes exactly one customer
+    int customer_id; // each event involes exactly one customer
 
     Event(int par_event_time, int par_customer_id)
     {
@@ -51,7 +52,9 @@ public:
 void initialize_system(
     std::ifstream &in_file,
     std::deque<Event> &arrival_events,
-    std::vector<Customer> &customers)
+    std::vector<Customer> &customers,
+    std::vector<Customer> &high_customers,
+    std::vector<Customer> &low_customers)
 {
     std::string name;
     int priority, arrival_time, slots_requested;
@@ -69,6 +72,37 @@ void initialize_system(
         arrival_events.push_back(arrival_event);
 
         customer_id++;
+    }
+    //sort arrays in low/high priority customers
+    for (int i = 0; i < customers.size(); i++)
+    {
+        if (customers[i].priority == 0)
+        {
+            high_customers.push_back(customers[i]);
+        }
+        else
+        {
+            low_customers.push_back(customers[i]);
+        }
+        // cout << customers[i].priority << endl;
+    }
+    //Print the high priority customers
+    std::cout << "priority=0 "
+              << "arrival_time "
+              << "slots_remaining " << std::endl;
+    for (auto x : high_customers)
+    {
+        std::cout << x.priority << "               " << x.arrival_time
+                  << "          " << x.slots_remaining << std::endl;
+    }
+    //Print the low priority customers
+    std::cout << "priority=1 "
+              << "arrival_time "
+              << "slots_remaining " << std::endl;
+    for (auto x : low_customers)
+    {
+        std::cout << x.priority << "               " << x.arrival_time
+                  << "          " << x.slots_remaining << std::endl;
     }
 }
 
@@ -117,13 +151,15 @@ int main(int argc, char *argv[])
     // deque: https://www.geeksforgeeks.org/deque-cpp-stl/
     // vector: https://www.geeksforgeeks.org/vector-in-cpp-stl/
     std::deque<Event> arrival_events; // new customer arrivals
-    std::vector<Customer> customers; // information about each customer
+    std::vector<Customer> customers;  // information about each customer
+    std::vector<Customer> high_customers;
+    std::vector<Customer> low_customers;
 
     // read information from file, initialize events queue
-    initialize_system(in_file, arrival_events, customers);
+    initialize_system(in_file, arrival_events, customers, high_customers, low_customers);
 
-    int current_id = -1; // who is using the machine now, -1 means nobody
-    int time_out = -1; // time when current customer will be preempted
+    int current_id = -1;   // who is using the machine now, -1 means nobody
+    int time_out = -1;     // time when current customer will be preempted
     std::deque<int> queue; // waiting queue
 
     // step by step simulation of each time slot
