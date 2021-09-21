@@ -13,7 +13,7 @@ andrey.kan@adelaide.edu.au
 #include <vector>
 
 // std is a namespace: https://www.cplusplus.com/doc/oldtutorial/namespaces/
-const int TIME_ALLOWANCE = 8;  // allow to use up to this number of time slots at once
+const int TIME_ALLOWANCE = 9;  // allow to use up to this number of time slots at once
 const int PRINT_LOG = 0; // print detailed execution trace
 
 class Customer
