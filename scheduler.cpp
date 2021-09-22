@@ -11,10 +11,12 @@ andrey.kan@adelaide.edu.au
 #include <fstream>
 #include <deque>
 #include <vector>
+using namespace std;
 
 // std is a namespace: https://www.cplusplus.com/doc/oldtutorial/namespaces/
-const int TIME_ALLOWANCE = 8;  // allow to use up to this number of time slots at once
+const int TIME_ALLOWANCE = 9;  // allow to use up to this number of time slots at once
 const int PRINT_LOG = 0; // print detailed execution trace
+int h[0];
 
 class Customer
 {
@@ -68,8 +70,25 @@ void initialize_system(
         Event arrival_event(arrival_time, customer_id);
         arrival_events.push_back(arrival_event);
 
+        int h[] = {customers[customer_id].slots_remaining};
+        cout << h[0] << endl;
+        int n = sizeof(h);
+        int sum=0;
         customer_id++;
+        for (int i = 0; i < n; i++) {
+            sum+=h[i];
+            
+        }
+        std::cout << "sum is" << sum <<endl;
+        
+    int TIME_ALLOWANCE = sum/sizeof(h);
+    //cout << TIME_ALLOWANCE << endl;
+        
     }
+   
+ 
+    
+    
 }
 
 void print_state(
