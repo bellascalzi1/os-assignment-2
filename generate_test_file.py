@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/python3
 import random
 
-no_customers = random.randint(5, 70)
+no_customers = random.randint(20, 100)
 time = 0
 output = ''
 for i in range(no_customers):

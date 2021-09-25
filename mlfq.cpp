@@ -15,7 +15,8 @@ andrey.kan@adelaide.edu.au
 #include <cmath>
 
 // std is a namespace: https://www.cplusplus.com/doc/oldtutorial/namespaces/
-int TIME_ALLOWANCE = 8;  // allow to use up to this number of time slots at once
+int TIME_ALLOWANCE_0;  // allow to use up to this number of time slots at once
+int TIME_ALLOWANCE_1;
 const int PRINT_LOG = 0; // print detailed execution trace
 
 class Customer
@@ -146,13 +147,14 @@ int main(int argc, char *argv[])
     std::sort(burst_times.begin(), burst_times.end());
 
     // Find the index of the element that is at the 80th percentile of the burst times
-    int eightypercent = std::round(0.6*burst_times.size());
+    int eightypercent = std::round(0.1*burst_times.size());
 
     std::cout << burst_times.at(eightypercent) << " is the number that is greater than 80 percent of all burst times" << std::endl;
-    TIME_ALLOWANCE = burst_times.at(eightypercent);
+    TIME_ALLOWANCE_0 = burst_times.at(eightypercent);
+    TIME_ALLOWANCE_1 = 2*TIME_ALLOWANCE_0;
 
     // Time that a process will age out into the high priority queue
-    int age_out = 20*TIME_ALLOWANCE;
+    int age_out = 20*TIME_ALLOWANCE_0;
 
     // Calcuating the average
     int sum_of_all_elements = 0;
@@ -165,12 +167,12 @@ int main(int argc, char *argv[])
     int average = sum_of_all_elements / burst_times.size();
 
     std::cout << "Average of the burst times is " << average << " count is " << burst_times.size() << " sum is " << sum_of_all_elements << std::endl;
-    // TIME_ALLOWANCE = average;
 
     int current_id = -1; // who is using the machine now, -1 means nobody
     int time_out = -1; // time when current customer will be preempted
-    std::deque<int> high_priority; // waiting queue
-    std::deque<int> low_priority;
+    std::deque<int> queue_0; // waiting queue
+    std::deque<int> queue_1;
+    std::deque<int> queue_2;
 
     // step by step simulation of each time slot
     bool all_done = false;
@@ -179,16 +181,17 @@ int main(int argc, char *argv[])
         // welcome newly arrived customers
         while (!arrival_events.empty() && (current_time == arrival_events[0].event_time))
         {
-            if(customers.at(arrival_events[0].customer_id).priority == 0)
-            {
-                // std::cout << "Customer number " << arrival_events[0].customer_id << " is high priority" << std::endl;
-                high_priority.push_back(arrival_events[0].customer_id);
-            }
-            else
-            {
-                // std::cout << "Customer number " << arrival_events[0].customer_id << " is low priority" << std::endl;
-                low_priority.push_back(arrival_events[0].customer_id);
-            }
+            queue_0.push_back(arrival_events[0].customer_id);
+            // if(customers.at(arrival_events[0].customer_id).priority == 0)
+            // {
+            //     // std::cout << "Customer number " << arrival_events[0].customer_id << " is high priority" << std::endl;
+            //     queue_0.push_back(arrival_events[0].customer_id);
+            // }
+            // else
+            // {
+            //     // std::cout << "Customer number " << arrival_events[0].customer_id << " is low priority" << std::endl;
+            //     queue_1.push_back(arrival_events[0].customer_id);
+            // }
             arrival_events.pop_front();
         }
         // check if we need to take a customer off the machine
@@ -204,11 +207,17 @@ int main(int argc, char *argv[])
                     // Put customers back on the relevant queue based on their priority
                     if(customers[current_id].priority == 0)
                     {
-                        high_priority.push_back(current_id);
+                        customers[current_id].priority == 1;
+                        queue_1.push_back(current_id);
+                    }
+                    else if(customers[current_id].priority == 1)
+                    {
+                        customers[current_id].priority == 2;
+                        queue_2.push_back(current_id);
                     }
                     else
                     {
-                        low_priority.push_back(current_id);
+                        queue_2.push_back(current_id);
                     }
                 }
                 current_id = -1; // the machine is free now
@@ -217,47 +226,53 @@ int main(int argc, char *argv[])
         // if machine is empty, schedule a new customer
         if (current_id == -1)
         {
-            if (!high_priority.empty()) // is anyone waiting in high priority?
+            if (!queue_0.empty()) // is anyone waiting in high priority?
             {
-                current_id = high_priority.front();
+                current_id = queue_0.front();
                 std::cout << "Customer " << current_id << " is being scheduled " << "with response time " << current_time - customers.at(current_id).arrival_time << std::endl;
-                high_priority.pop_front();
-                if (TIME_ALLOWANCE > customers[current_id].slots_remaining)
+                queue_0.pop_front();
+                if (TIME_ALLOWANCE_0 > customers[current_id].slots_remaining)
                 {
                     time_out = current_time + customers[current_id].slots_remaining;
                 }
                 else
                 {
-                    time_out = current_time + TIME_ALLOWANCE;
+                    time_out = current_time + TIME_ALLOWANCE_0;
                 }
                 customers[current_id].playing_since = current_time;
             }
             // If no-one is waiting in high priority, schedule a customer in low priority
-            else if(!low_priority.empty())
+            else if(!queue_1.empty())
             {
-                current_id = low_priority.front();
+                current_id = queue_1.front();
                 std::cout << "Customer " << current_id << " is being scheduled" << " with response time "  << customers.at(current_id).arrival_time << std::endl;
-                low_priority.pop_front();
-                if (TIME_ALLOWANCE > customers[current_id].slots_remaining)
+                queue_1.pop_front();
+                if (TIME_ALLOWANCE_1 > customers[current_id].slots_remaining)
                 {
                     time_out = current_time + customers[current_id].slots_remaining;
                 }
                 else
                 {
-                    time_out = current_time + TIME_ALLOWANCE;
+                    time_out = current_time + TIME_ALLOWANCE_1;
                 }
                 customers[current_id].playing_since = current_time;
 
             }
+            else if(!queue_2.empty())
+            {
+                current_id = queue_2.front();
+                queue_2.pop_front();
+                
+                // FCFS
+                time_out = current_time + customers[current_id].slots_remaining;
+                customers[current_id].playing_since = current_time;
+            }
         }
 
-
-
-
-        print_state(out_file, current_time, current_id, arrival_events, high_priority, low_priority);
+        print_state(out_file, current_time, current_id, arrival_events, queue_0, queue_1);
 
         // exit loop when there are no new arrivals, no waiting and no playing customers
-        all_done = (arrival_events.empty() && high_priority.empty() && low_priority.empty() && (current_id == -1));
+        all_done = (arrival_events.empty() && queue_0.empty() && queue_1.empty() && (current_id == -1));
     }
 
     return 0;

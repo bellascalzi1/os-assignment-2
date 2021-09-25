@@ -153,6 +153,7 @@ bool Stats::compute_scheduling_stats(std::ifstream& results_file, std::vector<Cu
             {
                 // this is the first time this customer is playing
                 int response_time = current_time - customers[customer_id].arrival_time;
+                std::cout << "Response time for Customer " << customer_id << " is " << response_time << std::endl;
                 customers[customer_id].response_time = response_time;
                 if (response_time > max_response)
                 {
