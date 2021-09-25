@@ -52,6 +52,19 @@ public:
     }
 };
 
+// Approach for creating a SJF queue taken from https://en.cppreference.com/w/cpp/algorithm/stable_sort
+struct SJFHelper
+{
+    int customer_id;
+    int time_remaining;
+};
+
+// Used to sort items in the SJF queue
+bool operator<(const SJFHelper &lhs, const SJFHelper &rhs)
+{
+    return lhs.time_remaining < rhs.time_remaining;
+}
+
 void initialize_system(
     std::ifstream &in_file,
     std::deque<Event> &arrival_events,
@@ -149,13 +162,15 @@ int main(int argc, char *argv[])
     int tenpercent = std::round(0.1*burst_times.size());
 
     TIME_ALLOWANCE_0 = burst_times.at(tenpercent);
-    TIME_ALLOWANCE_1 = 6*TIME_ALLOWANCE_0;
+    TIME_ALLOWANCE_1 = 2*TIME_ALLOWANCE_0;
 
     int current_id = -1; // who is using the machine now, -1 means nobody
     int time_out = -1; // time when current customer will be preempted
     std::deque<int> queue_0; // waiting queue
     std::deque<int> queue_1;
     std::deque<int> queue_2;
+
+    std::vector<SJFHelper> sjf_vector;
 
     // step by step simulation of each time slot
     bool all_done = false;
@@ -187,14 +202,20 @@ int main(int argc, char *argv[])
                     }
                     else if(customers[current_id].priority == 1)
                     {
-                        // If the customer started off as low priority, send them straight to the FCFS queue
+                        // If the customer started off as low priority, send them straight to the SJF queue
                         customers[current_id].priority == 2;
-                        queue_2.push_back(current_id);
+
+                        SJFHelper helper {current_id, customers[current_id].slots_remaining};
+                        sjf_vector.push_back(helper);
+                        std::stable_sort(sjf_vector.begin(), sjf_vector.end());
                     }
                     else
                     {
-                        // Send customer to FCFS queue
-                        queue_2.push_back(current_id);
+                        // Send customer to SJF queue
+                        SJFHelper helper {current_id, customers[current_id].slots_remaining};
+                        sjf_vector.push_back(helper);
+                        std::stable_sort(sjf_vector.begin(), sjf_vector.end());
+
                     }
                 }
                 current_id = -1; // the machine is free now
@@ -242,12 +263,12 @@ int main(int argc, char *argv[])
 
             }
             // If there are no customers in high or low priority, schedule a customer in the FCFS queue
-            else if(!queue_2.empty())
+            else if(!sjf_vector.empty())
             {
-                current_id = queue_2.front();
-                queue_2.pop_front();
+                // Schedule the customer with the shortest time remaining
+                current_id = sjf_vector.front().customer_id;
+                sjf_vector.erase(sjf_vector.begin());
                 
-                // FCFS
                 time_out = current_time + customers[current_id].slots_remaining;
                 customers[current_id].playing_since = current_time;
             }
