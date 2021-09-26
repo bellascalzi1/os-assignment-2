@@ -168,7 +168,6 @@ int main(int argc, char *argv[])
     int time_out = -1; // time when current customer will be preempted
     std::deque<int> queue_0; // waiting queue
     std::deque<int> queue_1;
-    std::deque<int> queue_2;
 
     std::vector<SJFHelper> sjf_vector;
 
@@ -207,6 +206,8 @@ int main(int argc, char *argv[])
 
                         SJFHelper helper {current_id, customers[current_id].slots_remaining};
                         sjf_vector.push_back(helper);
+                        
+                        // Sort the SJF queue so that the customer with the shortest time remaining is first
                         std::stable_sort(sjf_vector.begin(), sjf_vector.end());
                     }
                     else
@@ -214,6 +215,8 @@ int main(int argc, char *argv[])
                         // Send customer to SJF queue
                         SJFHelper helper {current_id, customers[current_id].slots_remaining};
                         sjf_vector.push_back(helper);
+                        
+                        // Sort the SJF queue so that the customer with the shortest time remaining is first
                         std::stable_sort(sjf_vector.begin(), sjf_vector.end());
 
                     }
@@ -262,7 +265,7 @@ int main(int argc, char *argv[])
                 customers[current_id].playing_since = current_time;
 
             }
-            // If there are no customers in high or low priority, schedule a customer in the FCFS queue
+            // If there are no customers in high or low priority, schedule a customer in the SJF queue
             else if(!sjf_vector.empty())
             {
                 // Schedule the customer with the shortest time remaining
@@ -277,7 +280,7 @@ int main(int argc, char *argv[])
         print_state(out_file, current_time, current_id, arrival_events, queue_0, queue_1);
 
         // exit loop when there are no new arrivals, no waiting and no playing customers
-        all_done = (arrival_events.empty() && queue_0.empty() && queue_1.empty() && (current_id == -1));
+        all_done = (arrival_events.empty() && queue_0.empty() && queue_1.empty() && sjf_vector.empty() && (current_id == -1));
     }
 
     return 0;
